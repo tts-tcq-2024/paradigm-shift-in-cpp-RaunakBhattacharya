@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <iostream>
 #include <string>
+#include <map>
 using namespace std;
 
 enum class BatteryParameter {
@@ -18,19 +19,15 @@ const BatteryLimits temperatureLimits{0, 45};
 const BatteryLimits socLimits{20, 80};
 const BatteryLimits chargeRateLimits{0, 0.8};
 
+map<BatteryParameter, string> parameterErrorMessages = {
+    {BatteryParameter::TEMPERATURE, "Temperature out of range!\n"},
+    {BatteryParameter::SOC, "State of Charge out of range!\n"},
+    {BatteryParameter::CHARGE_RATE, "Charge Rate out of range!\n"}
+};
+
 bool isWithinLimits(float value, BatteryLimits limits, BatteryParameter parameter) {
     if (value < limits.min || value > limits.max) {
-        switch (parameter) {
-            case BatteryParameter::TEMPERATURE:
-                cout << "Temperature out of range!\n";
-                break;
-            case BatteryParameter::SOC:
-                cout << "State of Charge out of range!\n";
-                break;
-            case BatteryParameter::CHARGE_RATE:
-                cout << "Charge Rate out of range!\n";
-                break;
-        }
+        cout << parameterErrorMessages[parameter];
         return false;
     }
     return true;
