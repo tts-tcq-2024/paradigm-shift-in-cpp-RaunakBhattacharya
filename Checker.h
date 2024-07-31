@@ -21,7 +21,9 @@ class Battery {
 public:
     Battery();
     bool isWithinLimits(float value, BatteryLimits limits, BatteryParameter parameter);
+    void printErrorMessage(BatteryParameter parameter);
     bool isWithinWarningLimits(float value, BatteryWarningLimits limits, BatteryParameter parameter);
+    void printWarningMessage(BatteryParameter parameter);
     bool batteryIsOk(float temperature, float soc, float chargeRate);
     void testBatteryIsOk();
 private:
