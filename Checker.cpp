@@ -71,15 +71,15 @@ bool Battery::batteryIsOk(float temperature, float soc, float chargeRate) {
     const BatteryWarningLimits socWarningLimits{20+4, 80-4};
     const BatteryWarningLimits chargeRateWarningLimits{0+0.04, 0.8-0.04};
 
-    bool isTemperatureOk = isWithinLimits(temperature, temperatureLimits, BatteryParameter::TEMPERATURE);
-    bool isSocOk = isWithinLimits(soc, socLimits, BatteryParameter::SOC);
-    bool isChargeRateOk = isWithinLimits(chargeRate, chargeRateLimits, BatteryParameter::CHARGE_RATE);
+    bool isTemperatureOk = checkParameter(temperature, temperatureLimits, temperatureWarningLimits, BatteryParameter::TEMPERATURE);
+    bool isSocOk = checkParameter(soc, socLimits, socWarningLimits, BatteryParameter::SOC);
+    bool isChargeRateOk = checkParameter(chargeRate, chargeRateLimits, chargeRateWarningLimits, BatteryParameter::CHARGE_RATE);
 
-    bool isTemperatureWarningOk = isWithinWarningLimits(temperature, temperatureWarningLimits, BatteryParameter::TEMPERATURE);
-    bool isSocWarningOk = isWithinWarningLimits(soc, socWarningLimits, BatteryParameter::SOC);
-    bool isChargeRateWarningOk = isWithinWarningLimits(chargeRate, chargeRateWarningLimits, BatteryParameter::CHARGE_RATE);
+    return isTemperatureOk && isSocOk && isChargeRateOk;
+}
 
-    return isTemperatureOk && isSocOk && isChargeRateOk && isTemperatureWarningOk && isSocWarningOk && isChargeRateWarningOk;
+bool Battery::checkParameter(float value, BatteryLimits limits, BatteryWarningLimits warningLimits, BatteryParameter parameter) {
+    return isWithinLimits(value, limits, parameter) && isWithinWarningLimits(value, warningLimits, parameter);
 }
 
 void Battery::testBatteryIsOk() {
