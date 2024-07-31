@@ -30,28 +30,36 @@ Battery::Battery() {
     language = "English";
 }
 
-bool Battery::isWithinLimits(float value, BatteryLimits limits, BatteryParameter parameter) {
-    if (value < limits.min || value > limits.max) {
-        if (language == "German") {
-            std::cout << parameterErrorMessagesGerman[parameter];
-        } else {
-            std::cout << parameterErrorMessages[parameter];
-        }
-        return false;
+void Battery::printErrorMessage(BatteryParameter parameter) {
+    if (language == "German") {
+        std::cout << parameterErrorMessagesGerman[parameter];
+    } else {
+        std::cout << parameterErrorMessages[parameter];
     }
-    return true;
+}
+
+bool Battery::isWithinLimits(float value, BatteryLimits limits, BatteryParameter parameter) {
+    bool isOutOfRange = value < limits.min || value > limits.max;
+    if (isOutOfRange) {
+        printErrorMessage(parameter);
+    }
+    return !isOutOfRange;
+}
+
+void Battery::printWarningMessage(BatteryParameter parameter) {
+    if (language == "German") {
+        std::cout << parameterWarningMessagesGerman[parameter];
+    } else {
+        std::cout << parameterWarningMessages[parameter];
+    }
 }
 
 bool Battery::isWithinWarningLimits(float value, BatteryWarningLimits limits, BatteryParameter parameter) {
-    if (value < limits.min || value > limits.max) {
-        if (language == "German") {
-            std::cout << parameterWarningMessagesGerman[parameter];
-        } else {
-            std::cout << parameterWarningMessages[parameter];
-        }
-        return false;
+    bool isOutOfRange = value < limits.min || value > limits.max;
+    if (isOutOfRange) {
+        printWarningMessage(parameter);
     }
-    return true;
+    return !isOutOfRange;
 }
 
 bool Battery::batteryIsOk(float temperature, float soc, float chargeRate) {
@@ -63,12 +71,15 @@ bool Battery::batteryIsOk(float temperature, float soc, float chargeRate) {
     const BatteryWarningLimits socWarningLimits{20+4, 80-4};
     const BatteryWarningLimits chargeRateWarningLimits{0+0.04, 0.8-0.04};
 
-    return isWithinLimits(temperature, temperatureLimits, BatteryParameter::TEMPERATURE) &&
-           isWithinLimits(soc, socLimits, BatteryParameter::SOC) &&
-           isWithinLimits(chargeRate, chargeRateLimits, BatteryParameter::CHARGE_RATE) &&
-           isWithinWarningLimits(temperature, temperatureWarningLimits, BatteryParameter::TEMPERATURE) &&
-           isWithinWarningLimits(soc, socWarningLimits, BatteryParameter::SOC) &&
-           isWithinWarningLimits(chargeRate, chargeRateWarningLimits, BatteryParameter::CHARGE_RATE);
+    bool isTemperatureOk = isWithinLimits(temperature, temperatureLimits, BatteryParameter::TEMPERATURE);
+    bool isSocOk = isWithinLimits(soc, socLimits, BatteryParameter::SOC);
+    bool isChargeRateOk = isWithinLimits(chargeRate, chargeRateLimits, BatteryParameter::CHARGE_RATE);
+
+    bool isTemperatureWarningOk = isWithinWarningLimits(temperature, temperatureWarningLimits, BatteryParameter::TEMPERATURE);
+    bool isSocWarningOk = isWithinWarningLimits(soc, socWarningLimits, BatteryParameter::SOC);
+    bool isChargeRateWarningOk = isWithinWarningLimits(chargeRate, chargeRateWarningLimits, BatteryParameter::CHARGE_RATE);
+
+    return isTemperatureOk && isSocOk && isChargeRateOk && isTemperatureWarningOk && isSocWarningOk && isChargeRateWarningOk;
 }
 
 void Battery::testBatteryIsOk() {
