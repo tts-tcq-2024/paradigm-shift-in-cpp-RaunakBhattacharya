@@ -25,6 +25,7 @@ public:
     bool isWithinWarningLimits(float value, BatteryWarningLimits limits, BatteryParameter parameter);
     void printWarningMessage(BatteryParameter parameter);
     bool batteryIsOk(float temperature, float soc, float chargeRate);
+    bool checkParameter(float value, BatteryLimits limits, BatteryWarningLimits warningLimits, BatteryParameter parameter); 
     void testBatteryIsOk();
 private:
     std::map<BatteryParameter, std::string> parameterErrorMessages;
