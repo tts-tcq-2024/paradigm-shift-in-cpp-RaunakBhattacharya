@@ -81,3 +81,9 @@ void Battery::testBatteryIsOk() {
     assert(batteryIsOk(25, 70, 0.76) == false); // Warning for Charge Rate
     assert(batteryIsOk(24, 70, 0.7) == false); // Warning for Temperature
 }
+
+int main() {
+    Battery battery;
+    battery.testBatteryIsOk();
+    return 0;
+}
